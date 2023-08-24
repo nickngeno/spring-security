@@ -31,6 +31,7 @@ public class ProductService {
         return this.productList;
     }
     public Product getProduct(int id){
+        this.generateProducts();
         return this.productList
                 .stream()
                 .filter(product -> id == product.getId())

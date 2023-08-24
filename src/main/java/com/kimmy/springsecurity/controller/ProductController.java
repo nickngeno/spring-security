@@ -3,6 +3,7 @@ package com.kimmy.springsecurity.controller;
 import com.kimmy.springsecurity.model.Product;
 import com.kimmy.springsecurity.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +20,20 @@ public class ProductController {
 
 
     @GetMapping("/v1")
-    public String home () {
+    public String home() {
         return "Welcome home buddy!";
     }
 
     @GetMapping("/v1/products")
-    public List<Product> productList () {
-        return  productService.getProductList();
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public List<Product> productList() {
+        return productService.getProductList();
     }
 
-     @GetMapping("/v1/products/{id}")
-    public Product getProduct (@PathVariable int id) {
-        return  productService.getProduct(id);
+    @GetMapping("/v1/products/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    public Product getProduct(@PathVariable int id) {
+        return productService.getProduct(id);
     }
 
 

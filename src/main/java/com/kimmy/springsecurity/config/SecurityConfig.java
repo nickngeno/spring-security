@@ -1,5 +1,6 @@
 package com.kimmy.springsecurity.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,8 +18,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private  UserInfoDetailsService userInfoDetailsService;
+
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
+
+//        UserDetails admin =  User.builder()
+//                .username("admin")
+//                .password(encoder.encode("pass1"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        UserDetails user =  User.builder()
+//                .username("user")
+//                .password(encoder.encode("pass2"))
+//                .roles("USER")
+//                .build();
+//
+//        return  new InMemoryUserDetailsManager(admin,user);
         return new UserInfoDetailsService();
     }
 
@@ -28,8 +46,7 @@ public class SecurityConfig {
         return http.csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1", "/api/v1/user")
-                .permitAll()
+                .requestMatchers("/api/v1", "/api/v1/user").permitAll()
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/products/**")
@@ -51,7 +68,7 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider (){
 
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+        daoAuthenticationProvider.setUserDetailsService(userDetailsService(passwordEncoder()));
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return  daoAuthenticationProvider;
     }
